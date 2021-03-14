@@ -1,4 +1,4 @@
-This is a python menu program for automating partitioning using **LVM**
+[LvmMenu.py](./LvmMenu.py) is a python menu program for automating partitioning using **LVM**
 
 ## What is LVM?
 
