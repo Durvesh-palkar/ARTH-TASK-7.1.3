@@ -12,15 +12,15 @@ LVM allows for very flexible disk space management. It provides features like th
 
 [LvmMenu.py](./LvmMenu.py) can do the following operations automatically for you:
 
--Create a Physical Volume
--Create a Volume Group
--Create a Logical Volume and mount it
--Display Physical Volume
--Display Volume Group
--Display Logical Volume
--Extend the size of a Logical Volume
--Reduce the size of a Logical Volume
--Add more Physical Volumes to Volume Group
+- Create a Physical Volume
+- Create a Volume Group
+- Create a Logical Volume and mount it
+- Display Physical Volume
+- Display Volume Group
+- Display Logical Volume
+- Extend the size of a Logical Volume
+- Reduce the size of a Logical Volume
+- Add more Physical Volumes to Volume Group
 
 ***
 
