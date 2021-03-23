@@ -1,0 +1,151 @@
+#configuring Namenode
+
+- hosts: master
+  vars_prompt:
+   - name: dir1
+     prompt: "Enter the directory name for name node"
+     private: no
+
+  tasks:
+    - name: Checking if JDK is present
+      shell: rpm -qa | jdk
+      register: isjdk
+      ignore_errors: yes
+
+    - name: Checking if Hadoop is present
+      shell: rpm -qa | hadoop
+      register: ishadoop
+      ignore_errors: yes
+
+    - name: Copying the java software
+      copy:
+        src: "/root/jdk-8u171-linux-x64.rpm"
+        dest: "/root"
+      when: isjdk.rc != 0
+
+    - name: Copying hadoop software
+      copy:
+        src: "/root/hadoop-1.2.1-1.x86_64.rpm"
+        dest: "/root"
+      when: ishadoop.rc != 0
+
+    - name: Installation of Java software..
+      command: "rpm -i /root/jdk-8u171-linux-x64.rpm"
+      register:  x
+      ignore_errors:  yes
+
+    - debug:
+         var:  x
+    
+    - name: Installation of hadoop software..
+      command: "rpm -i /root/hadoop-1.2.1-1.x86_64.rpm --force"
+      register: y
+      ignore_errors: yes
+
+    - debug:
+         var:  y
+
+    - name: Creating name node directory
+      file:
+        path: "{{ dir1 }}"
+        state: directory
+
+    - name: Configuration of hdfs-site.xml
+      template:
+        src: "/root/Task11/master_hdfs-site.xml"     
+        dest: "/etc/hadoop/hdfs-site.xml" 
+
+    - name: Configuration of core-site.xml
+      template:
+        src: "/root/Task11/master_core-site.xml"
+        dest: "/etc/hadoop/core-site.xml"
+        
+   
+    - name: Formating The Name Node Directory..
+      shell: "echo Y | hadoop namenode -format"
+      register: format
+
+    - debug:
+        var: format
+
+    - name: Starting hadoop Name Node Service..
+      command: "hadoop-daemon.sh start namenode" 
+      register: service
+
+    - debug:
+        var: service
+
+    - name: Checking status of Name Node 
+      command: "jps"
+      register: jps
+
+    - debug:
+        var: jps
+        
+ #Configuring Data Node       
+
+- hosts: slaves
+  vars_prompt:
+   - name: dir2
+     prompt: "Enter the directory name for data node"
+     private: no
+
+  tasks:
+   - name: Copying hadoop software
+     copy:
+        src: "/root/hadoop-1.2.1-1.x86_64.rpm"
+        dest: "/root"
+
+   - name: Copying the java software
+     copy:
+        src: "/root/jdk-8u171-linux-x64.rpm"
+        dest: "/root"
+
+   - name: Installation of Java software..
+     command: "rpm -i /root/jdk-8u171-linux-x64.rpm"
+     register: x
+     ignore_errors: yes
+
+   - debug:
+        var: x
+   - name: Installation of hadoop software..
+     command: "rpm -i /root/hadoop-1.2.1-1.x86_64.rpm --force"
+     register: y
+     ignore_errors: yes
+     
+   - debug:
+        var: y
+
+   - name: Creating data node directory
+     file:
+        path: "{{ dir2 }}"
+        state: directory
+
+   - name: Configuration of hdfs-site
+     template:
+        src: "/root/Task11/slave_hdfs-site.xml"
+        dest: "/etc/hadoop/hdfs-site.xml"
+
+   - name: Configuration of core-site.xml
+     template:
+        src: "/root/Task11/slave_core-site.xml"
+        dest: "/etc/hadoop/core-site.xml"
+       
+
+   - name: Starting hadoop Data Node Service..
+     command: "hadoop-daemon.sh start datanode"
+     register: service
+   - debug:
+        var: service
+
+   - name: Checking status of Data Node..
+     command: "jps"
+     register: jps
+   - debug:
+        var: jps
+
+   - name: Checking hadoop cluster report..
+     command: "hadoop dfsadmin -report"
+     register: report
+   - debug:
+        var: report
