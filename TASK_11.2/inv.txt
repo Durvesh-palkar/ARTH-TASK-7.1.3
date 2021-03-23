@@ -1,6 +1,0 @@
-[master]
-192.168.43.149 ansible_user=root ansible_ssh_pass=redhat ansible_connection=ssh
-
-[slaves]
-192.168.43.216 ansible_user=root ansible_ssh_pass=redhat ansible_connection=ssh
-
